@@ -1,22 +1,16 @@
-import { Router } from 'express';
-import { getUserDetails , getAllUsers, updateUser, deleteUser } from '../controller/userController.js'
+import { Router } from "express";
+import {
+  getAllUsers,
+  createUser,
+  deleteUser,
+  getUserCount,
+} from "../controller/userController.js";
 
+const router = Router();
 
-const userRouter = Router();
+router.get("/", getAllUsers);
+router.post("/", createUser);
+router.delete("/:id", deleteUser);
+router.get("/count", getUserCount);
 
-userRouter.get('/' , (req,res)=>{
-    res.send("User route is working");
-})
-
-userRouter.get('/user/:id', getUserDetails);
-
-userRouter.get('/users', getAllUsers);
-
-userRouter.put('/user/:id', updateUser);
-
-userRouter.delete('/user/:id', deleteUser );
-
-export default userRouter;
-
-
-
+export default router;

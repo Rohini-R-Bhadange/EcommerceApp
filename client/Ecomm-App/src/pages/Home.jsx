@@ -1,8 +1,6 @@
-import React from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import ProductCart from "../components/ProductCart";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const products = [
   {
@@ -26,34 +24,54 @@ const products = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate(); // ✅ ADD THIS
+
   return (
     <>
-      <Navbar />
+      {/* HERO SECTION */}
+      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
+        <div className="max-w-7xl mx-auto px-6 py-28 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: -40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-5xl font-extrabold mb-6"
+          >
+            Welcome to ShopEase 🛒
+          </motion.h1>
 
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20 text-center">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="text-4xl font-bold"
-        >
-          Welcome to ShopEase 🛒
-        </motion.h1>
-        <p className="mt-4">Best products at best prices</p>
-      </div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-lg opacity-90 mb-8"
+          >
+            Discover quality products at unbeatable prices
+          </motion.p>
 
-      {/* Products */}
-      <div className="max-w-7xl mx-auto p-6">
-        <h2 className="text-2xl font-bold mb-6">Featured Products</h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((item) => (
-            <ProductCart key={item.id} product={item} />
-          ))}
+          {/* ✅ WORKING SHOP NOW BUTTON */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            onClick={() => navigate("/products")}   // ✅ IMPORTANT
+            className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold shadow hover:shadow-lg transition"
+          >
+            Shop Now
+          </motion.button>
         </div>
       </div>
 
-      <Footer />
+      {/* FEATURED PRODUCTS */}
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-bold mb-10 text-gray-800">
+          Featured Products
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+          {products.map((p) => (
+            <ProductCart key={p.id} product={p} />
+          ))}
+        </div>
+      </div>
     </>
   );
 };

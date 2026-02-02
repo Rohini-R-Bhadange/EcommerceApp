@@ -1,13 +1,35 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/api/auth";
+const BASE = "http://localhost:3000/api";
 
-export const Login = async (data) => {
-  const response = await axios.post(`${BASE_URL}/login`, data);
-  return response.data;
-};
+// AUTH
+export const Login = (data) =>
+  axios.post(`${BASE}/auth/login`, data).then(res => res.data);
 
-export const Register = async (data) => {
-  const response = await axios.post(`${BASE_URL}/register`, data);
-  return response.data;
-};
+export const Register = (data) =>
+  axios.post(`${BASE}/auth/register`, data).then(res => res.data);
+
+// PRODUCTS
+export const fetchProducts = () =>
+  axios.get(`${BASE}/products`).then(res => res.data);
+
+export const createProduct = (data) =>
+  axios.post(`${BASE}/products/create`, data).then(res => res.data);
+
+// USERS (ADMIN)
+export const fetchUsers = () =>
+  axios.get(`${BASE}/users`).then(res => res.data);
+
+export const addUser = (data) =>
+  axios.post(`${BASE}/users`, data).then(res => res.data);
+
+export const deleteUser = (id) =>
+  axios.delete(`${BASE}/users/${id}`);
+
+// ================= ORDERS =================
+export const createOrder = (data) =>
+  axios.post(`${BASE}/orders`, data).then(res => res.data);
+
+export const fetchOrders = () =>
+  axios.get(`${BASE}/orders`).then(res => res.data);
+

@@ -1,37 +1,47 @@
+import Product from "../model/productModel.js";
 
+// ================= CREATE PRODUCT =================
+export const createProduct = async (req, res) => {
+  try {
+    const product = new Product(req.body);
+    await product.save();
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-const createProduct= (req,res)=>{
-    try{
-        const { name, description, price, stock, category } = req.body;
+// ================= GET ALL PRODUCTS =================
+export const getProducts = async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-        if(!name || !description || !price || !stock || !category){
-            return res.status(400).send("All fields are required");
-        }
+// ================= GET SINGLE PRODUCT BY ID =================
+export const getSingleProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
 
-        const newProduct = {
-            id : "PR" + Date.now().toString(),
-            name,
-            description,
-            price,
-            stock,
-            category
-        }
-
-        products.push(newProduct);
-        res.status(201).send("Product created successfully");
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
     }
-    catch(err){
-        res.status(500).send("Server error");
-    }
-}
 
-const getAllProducts = (req,res) => {
-    try{
-        res.status(200).json(products);
-    }
-    catch(err){
-        res.status(500).send("Server error");
-    }
-}
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export { createProduct, getAllProducts };
+// ================= PRODUCT COUNT (DASHBOARD) =================
+export const getProductCount = async (req, res) => {
+  try {
+    const count = await Product.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

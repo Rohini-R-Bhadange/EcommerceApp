@@ -86,7 +86,6 @@ const RegisterPage = () => {
 
           {/* Form */}
           <form onSubmit={handleRegister} className="space-y-5">
-            console.log("Sending data:", registerData);
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

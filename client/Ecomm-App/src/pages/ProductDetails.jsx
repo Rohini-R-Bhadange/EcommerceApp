@@ -1,45 +1,74 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import { motion } from "framer-motion";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useCart } from "../context/CartContext";
 
 const ProductDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
 
-  // Dummy product
-  const product = {
-    title: "iPhone 14",
-    price: 69999,
-    description: "Powerful performance, amazing camera, and stylish design.",
-    image: "https://cdn-icons-png.flaticon.com/512/179/179457.png",
-  };
+  const [product, setProduct] = useState(null);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const res = await axios.get(
+        `http://localhost:3000/api/products/${id}`
+      );
+      setProduct(res.data);
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (!product) {
+    return <div className="text-center mt-20">Loading...</div>;
+  }
 
   return (
-    <>
-      <Navbar />
+    <div className="min-h-screen bg-slate-50 p-6">
+      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-md p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <div className="overflow-hidden rounded-xl">
+          <img
+            src={product.image}
+            alt={product.title}
+            className="w-full h-96 object-cover"
+          />
+        </div>
 
-      <div className="max-w-6xl mx-auto p-6 grid md:grid-cols-2 gap-10">
-        <motion.img
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          src={product.image}
-          className="w-full h-80 object-contain"
-        />
-
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-        >
+        <div className="space-y-5">
           <h1 className="text-3xl font-bold">{product.title}</h1>
-          <p className="text-xl text-blue-600 font-semibold mt-2">₹{product.price}</p>
-          <p className="mt-4 text-gray-600">{product.description}</p>
 
-          <button className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
-            Add to Cart
-          </button>
-        </motion.div>
+          <p className="text-blue-600 text-2xl font-semibold">
+            ₹{product.price}
+          </p>
+
+          <p className="text-gray-600">
+            {product.description}
+          </p>
+
+          <div className="flex gap-4">
+            <button
+              onClick={() => {
+                addToCart(product);
+                navigate("/cart");
+              }}
+              className="bg-blue-600 text-white px-6 py-3 rounded-xl"
+            >
+              Add to Cart
+            </button>
+
+            <button
+              onClick={() => navigate("/products")}
+              className="border px-6 py-3 rounded-xl"
+            >
+              Back
+            </button>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

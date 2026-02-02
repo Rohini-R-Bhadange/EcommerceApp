@@ -1,27 +1,40 @@
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const ProductCart = ({ product }) => {
+  const { addToCart } = useCart();
+
   return (
-    <motion.div
-      whileHover={{ scale: 1.05 }}
-      className="bg-white shadow-lg rounded-xl p-4"
-    >
-      <Link to={`/product/${product.id}`}>
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden">
+      <div className="h-48 bg-slate-100 flex items-center justify-center">
         <img
           src={product.image}
           alt={product.title}
-          className="h-40 w-full object-contain cursor-pointer"
+          className="h-36 object-contain"
         />
-        <h2 className="font-semibold mt-2">{product.title}</h2>
-      </Link>
+      </div>
 
-      <p className="text-blue-600 font-bold">₹{product.price}</p>
+      <div className="p-4">
+        <h3 className="font-semibold text-lg">{product.title}</h3>
+        <p className="text-blue-600 font-bold text-xl">₹{product.price}</p>
 
-      <button className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg w-full hover:bg-blue-700">
-        Add to Cart
-      </button>
-    </motion.div>
+        <div className="flex gap-3 mt-4">
+          <button
+            onClick={() => addToCart(product)}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl"
+          >
+            Add to Cart
+          </button>
+
+          <Link
+            to={`/product/${product._id}`}   // ✅ FIXED
+            className="flex-1 text-center border py-2 rounded-xl"
+          >
+            View
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 };
 

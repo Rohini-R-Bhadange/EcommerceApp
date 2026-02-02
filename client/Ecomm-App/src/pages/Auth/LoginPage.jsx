@@ -1,114 +1,73 @@
-import React, { useState } from 'react'
-import { Login } from '../../api/apis.js'
-import { Link, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import React, { useState } from "react";
+import { Login } from "../../api/apis";
+import { useNavigate, Link } from "react-router-dom";
 
 const LoginPage = () => {
-  const navigate = useNavigate()
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
-    e.preventDefault()
-    setError('')
-    setIsLoading(true)
-
-    const userData = { email, password }
+    e.preventDefault();
+    setError("");
 
     try {
-      const response = await Login(userData)
+      const response = await Login({ email, password });
 
       if (response.token) {
-        localStorage.setItem('token', response.token)
-        navigate('/')
-      } else {
-        setError('Invalid credentials. Please try again.')
+        // ✅ SAVE TOKEN & USER
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
+
+        // ✅ ROLE BASED REDIRECT
+        if (response.user.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       }
     } catch (err) {
-      setError('Unable to sign in right now. Please retry.')
-    } finally {
-      setIsLoading(false)
+      setError("Invalid credentials");
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-100 px-4">
-
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-md"
+    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-6 rounded-xl shadow w-96"
       >
-        <div className="bg-white shadow-xl rounded-3xl px-8 py-10 space-y-8 border">
+        <h2 className="text-2xl font-bold mb-4">Login</h2>
 
-          {/* Logo */}
-          <div className="text-center space-y-2">
-            <div className="inline-block px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-semibold shadow">
-              ShopEase
-            </div>
-            <h1 className="text-2xl font-bold text-gray-800">Welcome Back 👋</h1>
-            <p className="text-sm text-gray-500">Login to continue shopping</p>
-          </div>
+        {error && <p className="text-red-500 mb-2">{error}</p>}
 
-          {/* Error */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">
-              {error}
-            </div>
-          )}
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full border p-2 mb-3 rounded"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-          {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-5">
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full border p-2 mb-3 rounded"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-            <div>
-              <label className="text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full mt-1 px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none"
-                required
-              />
-            </div>
+        <button className="w-full bg-blue-600 text-white py-2 rounded">
+          Login
+        </button>
 
-            <div>
-              <label className="text-sm font-medium text-gray-700">Password</label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full mt-1 px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] transition disabled:opacity-60"
-            >
-              {isLoading ? 'Signing in...' : 'Login'}
-            </button>
-          </form>
-
-          {/* Register link */}
-          <p className="text-center text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-blue-600 font-semibold hover:underline">
-              Create one
-            </Link>
-          </p>
-
-        </div>
-      </motion.div>
+        <p className="text-sm mt-3">
+          No account? <Link to="/register" className="text-blue-600">Register</Link>
+        </p>
+      </form>
     </div>
-  )
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;
